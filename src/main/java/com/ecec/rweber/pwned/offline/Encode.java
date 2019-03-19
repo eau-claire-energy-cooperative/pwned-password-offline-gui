@@ -164,7 +164,7 @@ public class Encode extends JFrame{
 		mainPanel.add(scroll2);
 		
 		//create the buttons
-		JButton convertButton = new JButton("Convert");
+		JButton convertButton = new JButton("Encode");
 		convertButton.addActionListener(new ActionListener(){
 
 			@Override
@@ -182,11 +182,15 @@ public class Encode extends JFrame{
 			
 		});
 		
+		JButton findButton = new JButton("Password Search");
+		
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
 		buttonPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 		buttonPane.add(Box.createHorizontalGlue());
 		buttonPane.add(convertButton);
+		buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
+		buttonPane.add(findButton);
 		
 		//add both panels to the content area
 		Container contentPane = this.getContentPane();
