@@ -17,15 +17,12 @@ public class ProcessOutputStreamPrinter extends Thread {
     }
     
     public void run() {
-    	System.out.println(m_name + ": gathering output");
-    	
+  	
         try {
             String line;
             while (null != (line = m_reader.readLine()))
             {
-            	System.out.println(m_name + ": " + line);
-            	
-                m_output.append(line);
+                m_output.append(line + "\n");
             }
             
             m_reader.close();
@@ -33,8 +30,7 @@ public class ProcessOutputStreamPrinter extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
-        System.out.println(m_name + ": completed");
+
     }
     
     public String getOutput(){

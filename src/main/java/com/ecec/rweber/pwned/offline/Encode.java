@@ -12,6 +12,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.security.MessageDigest;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -28,9 +30,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.ecec.rweber.pwned.offline.util.PythonProcess;
 import com.ecec.rweber.pwned.offline.util.SHA1Encoder;
 
-public class Encode extends JFrame{
+public class Encode extends JFrame {
 	private static final long serialVersionUID = -1355985486330269435L;
 	private int HEIGHT = 600;
 	private int WIDTH = 1000;
@@ -40,6 +43,17 @@ public class Encode extends JFrame{
 	public Encode(){
 		this.setTitle("Pwned Password GUI");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	private String[] getHashes(){
+		String[] passwords = m_passInput.getText().split("\\n");
+		
+		for(int count = 0; count < passwords.length; count ++)
+		{
+			passwords[count] = SHA1Encoder.encode(passwords[count]);
+		}
+		
+		return passwords;
 	}
 	
 	private String chooseFile(){
@@ -68,29 +82,40 @@ public class Encode extends JFrame{
 	private boolean writeFile(String filename, String output){
 		boolean result = true;
 	
-		BufferedWriter writer;
-		try {
-			writer = new BufferedWriter(new FileWriter(filename));
-			
-			//break output into an array
-			String[] outputArray = output.split("\\n");
-			
-			for(int count = 0; count < outputArray.length; count ++)
-			{
-				writer.write(outputArray[count]);
-				writer.newLine();
+		if(filename != null)
+		{
+			BufferedWriter writer;
+			try {
+				writer = new BufferedWriter(new FileWriter(filename));
+				
+				//break output into an array
+				String[] outputArray = output.split("\\n");
+				
+				for(int count = 0; count < outputArray.length; count ++)
+				{
+					writer.write(outputArray[count]);
+					writer.newLine();
+				}
+				
+				writer.flush();
+				writer.close();
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				result = false;
 			}
-			
-			writer.flush();
-			writer.close();
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			result = false;
 		}
 		
 		return result;
+	}
+	
+	private void startSearch(){
+		PythonProcess p = new PythonProcess(getHashes());
+		
+		m_passOutput.append(p.run());
+		
+		m_passOutput.append("\nSearch Complete");
 	}
 	
 	private JMenuBar createMenuBar() {
@@ -108,10 +133,10 @@ public class Encode extends JFrame{
 				//create a string just of the hashes
 				String hashes = "";
 				
-				String[] passwords = m_passInput.getText().split("\\n");
+				String[] passwords = getHashes();
 				for(int count = 0; count < passwords.length; count ++)
 				{
-					hashes = hashes + SHA1Encoder.encode(passwords[count]) + "\n";
+					hashes = hashes + passwords[count] + "\n";
 				}
 				
 				if(!writeFile(filename,hashes))
@@ -162,22 +187,25 @@ public class Encode extends JFrame{
 		mainPanel.add(scroll2);
 		
 		//create the buttons
-		JButton searchButton = new JButton("Encode");
+		JButton searchButton = new JButton("Start Search");
 		searchButton.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				String[] passwords = m_passInput.getText().split("\\n");
+				String[] hashes = getHashes();
 				
 				//reset the output pane
 				m_passOutput.setText("Converting passwords to SHA-1:\n\n");
 				
-				for(int count = 0; count < passwords.length; count ++)
+				for(int count = 0; count < hashes.length; count ++)
 				{
-					m_passOutput.append(SHA1Encoder.encode(passwords[count]) + "\n");
+					m_passOutput.append(hashes[count] + "\n");
 				}
 				
 				m_passOutput.append("\nStarting Search.....\n\n");
+				
+				startSearch();
+				
 			}
 			
 		});
@@ -206,4 +234,5 @@ public class Encode extends JFrame{
 		e.run();
 	}
 
+	
 }
