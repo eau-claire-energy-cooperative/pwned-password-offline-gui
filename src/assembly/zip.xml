@@ -1,0 +1,19 @@
+<assembly>
+    <id>install</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <fileSets>
+    	<fileSet>
+       		<directory>${project.build.directory}</directory>
+       		<outputDirectory>/</outputDirectory>
+       		<includes>
+           		<include>${artifactId}-${version}.jar</include>
+       		</includes>
+       	</fileSet>
+       	<fileSet>
+       	    <directory>${project.basedir}/python</directory>
+       	    <outputDirectory>python</outputDirectory>
+       	</fileSet>
+    </fileSets>
+</assembly>

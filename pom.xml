@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.ecec</groupId>
   <artifactId>pwned-password-offline-gui</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.1.0</version>
   <name>Pwned Password Offline GUI</name>
   <description>Java GUI to search pwned password db offline</description>
   
@@ -14,6 +14,36 @@
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
+  	  <plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-jar-plugin</artifactId>
+		    <configuration>
+		        <archive>
+		            <manifest>
+		                <addClasspath>true</addClasspath>
+		            </manifest>
+		            <manifestEntries>
+		                <Main-Class>com.ecec.rweber.pwned.offline.Encode</Main-Class>
+		            </manifestEntries>
+		        </archive>
+		    </configuration>
+		</plugin>
+  	    <plugin>
+	    	<artifactId>maven-assembly-plugin</artifactId>
+	    	<version>2.5.3</version>
+	    	<configuration>
+	      		<descriptor>src/assembly/zip.xml</descriptor>
+	    	</configuration>
+	    	<executions>
+	      	<execution>
+	        	<id>create-archive</id>
+	        	<phase>package</phase>
+	        	<goals>
+	          		<goal>single</goal>
+	        	</goals>
+	      	</execution>
+	    	</executions>
+	   </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.3</version>
