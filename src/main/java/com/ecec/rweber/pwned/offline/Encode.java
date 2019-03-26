@@ -28,30 +28,24 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.ecec.rweber.pwned.offline.util.SHA1Encoder;
+
 public class Encode extends JFrame{
 	private static final long serialVersionUID = -1355985486330269435L;
 	private int HEIGHT = 600;
 	private int WIDTH = 1000;
 	private JTextArea m_passInput = null;
 	private JTextArea m_passOutput = null;
-	private MessageDigest m_encoder = null;
 	
 	public Encode(){
-		this.setTitle("Encode Passwords");
+		this.setTitle("Pwned Password GUI");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		try{
-			m_encoder = MessageDigest.getInstance("SHA-1");
-		}
-		catch(Exception e)
-		{
-			//can't go any further, kill the program
-			e.printStackTrace();
-			System.exit(2);
-		}
 	}
 	
-	private void saveFile(){
+	private String chooseFile(){
+		String result = null;
+		
+		//choose the file
 		JFileChooser saveAs = new JFileChooser();
 		saveAs.setFileFilter(new FileNameExtensionFilter("Text Files","txt"));
 		saveAs.setAcceptAllFileFilterUsed(false);
@@ -60,38 +54,36 @@ public class Encode extends JFrame{
 		
 		if(returnVal == JFileChooser.APPROVE_OPTION)
 		{
-			String file = saveAs.getSelectedFile().toString();
+			result = saveAs.getSelectedFile().toString();
 			
-			if(!file.endsWith(".txt"))
+			if(!result.endsWith(".txt"))
 			{
-				file = file + ".txt";
-			}
-			
-			if(!writeFile(file))
-			{
-				JOptionPane.showMessageDialog(this, "Saving file failed");
+				result = result + ".txt";
 			}
 		}
+		
+		return result;
 	}
 	
-	private boolean writeFile(String filename){
+	private boolean writeFile(String filename, String output){
 		boolean result = true;
 	
 		BufferedWriter writer;
 		try {
 			writer = new BufferedWriter(new FileWriter(filename));
 			
-			//get the hashes
-			String[] hashes = m_passOutput.getText().split("\\n");
+			//break output into an array
+			String[] outputArray = output.split("\\n");
 			
-			for(int count = 0; count < hashes.length; count ++)
+			for(int count = 0; count < outputArray.length; count ++)
 			{
-				writer.write(hashes[count]);
+				writer.write(outputArray[count]);
 				writer.newLine();
 			}
 			
 			writer.flush();
 			writer.close();
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -111,7 +103,21 @@ public class Encode extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				saveFile();
+				String filename = chooseFile();
+				
+				//create a string just of the hashes
+				String hashes = "";
+				
+				String[] passwords = m_passInput.getText().split("\\n");
+				for(int count = 0; count < passwords.length; count ++)
+				{
+					hashes = hashes + SHA1Encoder.encode(passwords[count]) + "\n";
+				}
+				
+				if(!writeFile(filename,hashes))
+				{
+					JOptionPane.showMessageDialog(null, "Saving file failed");
+				}
 			}
 			
 		});
@@ -133,14 +139,6 @@ public class Encode extends JFrame{
 		return result;
 	}
 	
-	private String byteArrayToHexString(byte[] b) {
-	  String result = "";
-	  for (int i=0; i < b.length; i++) {
-	    result +=
-	          Integer.toString( ( b[i] & 0xff ) + 0x100, 16).substring( 1 );
-	  }
-	  return result.toUpperCase();
-	}
 	
 	public void run(){
 		this.setSize(WIDTH,HEIGHT);
@@ -164,33 +162,32 @@ public class Encode extends JFrame{
 		mainPanel.add(scroll2);
 		
 		//create the buttons
-		JButton convertButton = new JButton("Encode");
-		convertButton.addActionListener(new ActionListener(){
+		JButton searchButton = new JButton("Encode");
+		searchButton.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String[] passwords = m_passInput.getText().split("\\n");
 				
 				//reset the output pane
-				m_passOutput.setText("");
+				m_passOutput.setText("Converting passwords to SHA-1:\n\n");
 				
 				for(int count = 0; count < passwords.length; count ++)
 				{
-					m_passOutput.setText(m_passOutput.getText() + byteArrayToHexString(m_encoder.digest(passwords[count].getBytes())) + "\n");
+					m_passOutput.append(SHA1Encoder.encode(passwords[count]) + "\n");
 				}
+				
+				m_passOutput.append("\nStarting Search.....\n\n");
 			}
 			
 		});
-		
-		JButton findButton = new JButton("Password Search");
 		
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
 		buttonPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 		buttonPane.add(Box.createHorizontalGlue());
-		buttonPane.add(convertButton);
+		buttonPane.add(searchButton);
 		buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
-		buttonPane.add(findButton);
 		
 		//add both panels to the content area
 		Container contentPane = this.getContentPane();
