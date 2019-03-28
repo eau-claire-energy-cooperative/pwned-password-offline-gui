@@ -8,9 +8,15 @@ import java.util.Observable;
 
 public class PythonProcess extends Observable {
 	private String[] m_hashes = null;
+	private boolean m_skipNotFound = true;
 	
 	public PythonProcess(String[] hashes){
+		this(hashes,true);
+	}
+	
+	public PythonProcess(String[] hashes, boolean skipNotFound){
 		m_hashes = hashes;
+		this.m_skipNotFound = skipNotFound;
 	}
 	
 	public String run(){
@@ -20,7 +26,11 @@ public class PythonProcess extends Observable {
 		List<String> command = new ArrayList<String>();
 		command.add("python");
 		command.add("binary_search.py");
-		command.add("--skip-not-found");  //don't print passwords we didn't find
+
+		if(m_skipNotFound)
+		{
+			command.add("--skip-not-found");  //don't print passwords we didn't find
+		}
 		
 		//add all the hashed passwords
 		command.addAll(Arrays.asList(m_hashes));

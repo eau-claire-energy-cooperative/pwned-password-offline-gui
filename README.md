@@ -20,7 +20,7 @@ For more information on what the password hash file even is check this blog post
 
 ### Usage
 
-Pretty simple, type your passwords in the type text box and hit "Start Search". This will encode the passwords with SHA-1 and kick-start the python process. Results will be displayed in the lower text window. 
+Pretty simple, type your passwords in the type text box and hit "Start Search". This will encode the passwords with SHA-1 and kick-start the python process. Results will be displayed in the lower text window. By default you'll get a "yes/no" type response for every password checked. If your password list is long and you only want to see found passwords uncheck "Show Not Found" in the options menu. 
 
 Nothing during this process is saved to the file system. The passwords are encoded and passed via command line arguments to the python process.
 

@@ -19,6 +19,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -39,6 +40,7 @@ public class Encode extends JFrame {
 	private int WIDTH = 1000;
 	private JTextArea m_passInput = null;
 	private JTextArea m_passOutput = null;
+	private JCheckBoxMenuItem m_showNotFound = null;
 	
 	public Encode(){
 		this.setTitle("Pwned Password GUI");
@@ -111,7 +113,8 @@ public class Encode extends JFrame {
 	}
 	
 	private void startSearch(){
-		PythonProcess p = new PythonProcess(getHashes());
+		//inverse showNot found as arg is "skipNotfound"
+		PythonProcess p = new PythonProcess(getHashes(),!m_showNotFound.isSelected());
 		
 		m_passOutput.append(p.run());
 		
@@ -149,6 +152,13 @@ public class Encode extends JFrame {
 		});
 		fileMenu.add(fileSave);
 		
+		//create options menu
+		JMenu opsMenu = new JMenu("Options");
+		
+		m_showNotFound = new JCheckBoxMenuItem("Show Not Found");
+		m_showNotFound.setSelected(true);
+		opsMenu.add(m_showNotFound);
+		
 		JMenuItem fileExit = new JMenuItem("Exit");
 		fileExit.addActionListener(new ActionListener(){
 
@@ -179,7 +189,7 @@ public class Encode extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "Pwned Password GUI v0.1.1\n Written By: Rob Weber \n Python Search File modifed from: https://github.com/pinae/HaveIBeenPwnedOffline \n Source: https://github.com/eau-claire-energy-cooperative/pwned-password-offline-gui");
+				JOptionPane.showMessageDialog(null, "Pwned Password GUI v0.1.2\n Written By: Rob Weber \n Python Search File modifed from: https://github.com/pinae/HaveIBeenPwnedOffline \n Source: https://github.com/eau-claire-energy-cooperative/pwned-password-offline-gui");
 			}
 			
 		});
@@ -187,6 +197,7 @@ public class Encode extends JFrame {
 		helpMenu.add(helpAbout);
 		
 		result.add(fileMenu);
+		result.add(opsMenu);
 		result.add(helpMenu);
 		
 		return result;
