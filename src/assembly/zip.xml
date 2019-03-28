@@ -12,6 +12,14 @@
        		</includes>
        	</fileSet>
        	<fileSet>
+       		<directory>${project.basedir}</directory>
+       		<outputDirectory>/</outputDirectory>
+       		<includes>
+           		<include>LICENSE</include>
+           		<include>README.md</include>
+       		</includes>
+       	</fileSet>
+       	<fileSet>
        	    <directory>${project.basedir}/python</directory>
        	    <outputDirectory>python</outputDirectory>
        	</fileSet>

@@ -10,7 +10,9 @@ For more information on what the password hash file even is check this blog post
 
 2. Clone this repository. You'll need the Java JDK to build the java GUI component using Maven and Python installed to run the search file. 
 
-3. Take the zipped file generated in the `target` directory (created by Maven) and extract it where you want to run the program. Alternatively download a release file from the [Release](https://github.com/eau-claire-energy-cooperative/pwned-password-offline-gui/releases) area. 
+3. Use ```mvn install``` to build the zip file or download a release file from the [Releases](https://github.com/eau-claire-energy-cooperative/pwned-password-offline-gui/releases) area.
+
+3. Take the zipped file (downloaded or generated) and extract it where you want to run the program.  
 
 4. Move the `pwned-passwords-sha1-ordered-by-hash-v4.txt` to the python directory within this folder. 
 
