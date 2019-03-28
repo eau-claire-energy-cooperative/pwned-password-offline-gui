@@ -121,6 +121,7 @@ public class Encode extends JFrame {
 	private JMenuBar createMenuBar() {
 		JMenuBar result = new JMenuBar();
 	
+		//create file menu
 		JMenu fileMenu = new JMenu("File");
 		
 		JMenuItem fileSave = new JMenuItem("Save Hashes");
@@ -159,7 +160,34 @@ public class Encode extends JFrame {
 		});
 		fileMenu.add(fileExit);
 		
+		//create help menu
+		JMenu helpMenu = new JMenu("Help");
+		
+		JMenuItem helpUsage = new JMenuItem("Instructions");
+		helpUsage.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "Type your passwords in the top text box. Click Start Search to see which passwords are found in the Pwned database file. ");
+			}
+			
+		});
+		helpMenu.add(helpUsage);
+		
+		JMenuItem helpAbout = new JMenuItem("About");
+		helpAbout.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "Pwned Password GUI v0.1.1\n Written By: Rob Weber \n Python Search File modifed from: https://github.com/pinae/HaveIBeenPwnedOffline \n Source: https://github.com/eau-claire-energy-cooperative/pwned-password-offline-gui");
+			}
+			
+		});
+		
+		helpMenu.add(helpAbout);
+		
 		result.add(fileMenu);
+		result.add(helpMenu);
 		
 		return result;
 	}
