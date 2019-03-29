@@ -22,10 +22,17 @@ import javax.swing.JTextArea;
 import com.ecec.rweber.pwned.offline.util.PythonProcess;
 import com.ecec.rweber.pwned.offline.util.SHA1Encoder;
 
+/**
+ * @author rweber
+ * 
+ * Launches the main GUI for the entire program. Enter passwords to be hashed and searched via python against the PwnedPassword database. 
+ *
+ */
 public class Encode extends JFrame {
 	private static final long serialVersionUID = -1355985486330269435L;
 	private int HEIGHT = 600;
 	private int WIDTH = 1000;
+	
 	private JTextArea m_passInput = null;
 	private JTextArea m_passOutput = null;
 	private JCheckBoxMenuItem m_showNotFound = null;
@@ -38,6 +45,12 @@ public class Encode extends JFrame {
 		m_saver = new FileSaver(this);
 	}
 	
+	/**
+	 * 
+	 * Get passwords (one per line) from the text input area and hash with sha-1
+	 * 
+	 * @return array of hashed passwords
+	 */
 	private String[] getHashes(){
 		String[] passwords = m_passInput.getText().split("\\n");
 		
@@ -49,6 +62,9 @@ public class Encode extends JFrame {
 		return passwords;
 	}
 	
+	/**
+	 * Start the search process by passing hashes to python process launcher. This will block until completed. 
+	 */
 	private void startSearch(){
 		//inverse showNot found as arg is "skipNotfound"
 		PythonProcess p = new PythonProcess(getHashes(),!m_showNotFound.isSelected());
@@ -58,10 +74,15 @@ public class Encode extends JFrame {
 		m_passOutput.append("\nSearch Complete");
 	}
 	
+	/**
+	 * creates the top menu bar
+	 * 
+	 * @return menu bar to attach to GUI
+	 */
 	private JMenuBar createMenuBar() {
 		JMenuBar result = new JMenuBar();
 	
-		//create file menu
+		//create FILE menu
 		JMenu fileMenu = new JMenu("File");
 		
 		JMenuItem fileSave = new JMenuItem("Save Hashes");
@@ -89,13 +110,6 @@ public class Encode extends JFrame {
 		});
 		fileMenu.add(fileSave);
 		
-		//create options menu
-		JMenu opsMenu = new JMenu("Options");
-		
-		m_showNotFound = new JCheckBoxMenuItem("Show Not Found");
-		m_showNotFound.setSelected(true);
-		opsMenu.add(m_showNotFound);
-		
 		JMenuItem fileExit = new JMenuItem("Exit");
 		fileExit.addActionListener(new ActionListener(){
 
@@ -107,7 +121,15 @@ public class Encode extends JFrame {
 		});
 		fileMenu.add(fileExit);
 		
-		//create help menu
+		//create OPTIONS menu
+		JMenu opsMenu = new JMenu("Options");
+		
+		//checkbox to toggle if no found hashes are shown in the display
+		m_showNotFound = new JCheckBoxMenuItem("Show Not Found");
+		m_showNotFound.setSelected(true);
+		opsMenu.add(m_showNotFound);
+		
+		//create HELP menu
 		JMenu helpMenu = new JMenu("Help");
 		
 		JMenuItem helpUsage = new JMenuItem("Instructions");
@@ -133,6 +155,7 @@ public class Encode extends JFrame {
 		
 		helpMenu.add(helpAbout);
 		
+		//add all drop downs to main menu
 		result.add(fileMenu);
 		result.add(opsMenu);
 		result.add(helpMenu);
@@ -141,33 +164,41 @@ public class Encode extends JFrame {
 	}
 	
 	
+	/**
+	 *  Initialize and launch the GUI
+	 */
 	public void run(){
 		this.setSize(WIDTH,HEIGHT);
 		this.setJMenuBar(this.createMenuBar());
 		
+		//main panel to be added to JFrame
 		JPanel mainPanel = new JPanel();
 		
 		mainPanel.setLayout(new BoxLayout(mainPanel,BoxLayout.PAGE_AXIS));
 		mainPanel.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
 		
+		//initialize text input area
 		m_passInput = new JTextArea();
 		JScrollPane scroll1 = new JScrollPane(m_passInput);	
 		mainPanel.add(scroll1);
 		mainPanel.add(Box.createRigidArea(new Dimension(0,5)));
 		
+		//add separation between text areas
 		mainPanel.add(Box.createRigidArea(new Dimension(0,5)));
 		
+		//initialize text output area
 		m_passOutput = new JTextArea();
 		m_passOutput.setEditable(false);
 		JScrollPane scroll2 = new JScrollPane(m_passOutput);
 		mainPanel.add(scroll2);
 		
-		//create the buttons
+		//create the search button
 		JButton searchButton = new JButton("Start Search");
 		searchButton.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				//convert any entered passwords to SHA-1
 				String[] hashes = getHashes();
 				
 				//reset the output pane
@@ -180,12 +211,14 @@ public class Encode extends JFrame {
 				
 				m_passOutput.append("\nStarting Search.....\n\n");
 				
+				//launch search process
 				startSearch();
 				
 			}
 			
 		});
 		
+		//create panel for button area
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
 		buttonPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
@@ -209,6 +242,4 @@ public class Encode extends JFrame {
 		Encode e = new Encode();
 		e.run();
 	}
-
-	
 }

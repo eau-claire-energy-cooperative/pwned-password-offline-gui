@@ -5,13 +5,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+/**
+ * @author rweber
+ *
+ * Stream reader to take output from a running process so it can be retrieved as a string 
+ */
 public class ProcessOutputStreamPrinter extends Thread {
-	private String m_name = null;
     private BufferedReader m_reader;
     private StringBuilder m_output = null;
     
-    public ProcessOutputStreamPrinter(String name, InputStream stream) {
-    	m_name = name;
+    /**
+     * @param stream the input stream to watch for text
+     */
+    public ProcessOutputStreamPrinter(InputStream stream) {
         m_reader = new BufferedReader(new InputStreamReader(stream));
         m_output = new StringBuilder();
     }
@@ -20,6 +26,8 @@ public class ProcessOutputStreamPrinter extends Thread {
   	
         try {
             String line;
+            
+            //watch for new lines until the process closes
             while (null != (line = m_reader.readLine()))
             {
                 m_output.append(line + "\n");
@@ -33,6 +41,9 @@ public class ProcessOutputStreamPrinter extends Thread {
 
     }
     
+    /**
+     * @return output from the stream
+     */
     public String getOutput(){
     	return m_output.toString();
     }

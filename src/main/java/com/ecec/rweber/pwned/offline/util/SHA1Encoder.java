@@ -2,8 +2,16 @@ package com.ecec.rweber.pwned.offline.util;
 
 import java.security.MessageDigest;
 
+/**
+ * @author rweber
+ * Encodes strings using SHA-1 encryption
+ */
 public abstract class SHA1Encoder {
 
+	/**
+	 * @param b bytstring to convert
+	 * @return the given bytestring as a hexidecimal value
+	 */
 	private static String byteArrayToHexString(byte[] b) {
 		String result = "";
 		
@@ -15,6 +23,10 @@ public abstract class SHA1Encoder {
 		return result.toUpperCase();
 	}
 	
+	/**
+	 * @param s the string to encode
+	 * @return string encoded with SHA-1
+	 */
 	public static final String encode(String s){
 		MessageDigest encoder = null;
 		

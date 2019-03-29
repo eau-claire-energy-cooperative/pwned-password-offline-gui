@@ -20,6 +20,11 @@ public class FileSaver {
 		m_parent = parent;
 	}
 	
+	/**
+	 * Select where to save text file using JFileChooser
+	 * 
+	 * @return filename to save - could be NULL if cancel pressed
+	 */
 	private String chooseFile(){
 		String result = null;
 		
@@ -43,11 +48,16 @@ public class FileSaver {
 		return result;
 	}
 	
+	/**
+	 * @param contents - the contents of the file as a string (will be split by newline)
+	 * @return if save completed without error
+	 */
 	public boolean save(String contents){
-		boolean result = true;
+		boolean result = true; 
 		
 		String filename = this.chooseFile();
 		
+		//check if cancel pressed - this return true 
 		if(filename != null)
 		{
 			BufferedWriter writer;
