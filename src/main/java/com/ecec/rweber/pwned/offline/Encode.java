@@ -1,26 +1,16 @@
 package com.ecec.rweber.pwned.offline;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.security.MessageDigest;
-import java.util.Observable;
-import java.util.Observer;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -29,8 +19,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import com.ecec.rweber.pwned.offline.util.PythonProcess;
 import com.ecec.rweber.pwned.offline.util.SHA1Encoder;
 
@@ -41,10 +29,13 @@ public class Encode extends JFrame {
 	private JTextArea m_passInput = null;
 	private JTextArea m_passOutput = null;
 	private JCheckBoxMenuItem m_showNotFound = null;
+	private FileSaver m_saver = null;
 	
 	public Encode(){
 		this.setTitle("Pwned Password GUI");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		m_saver = new FileSaver(this);
 	}
 	
 	private String[] getHashes(){
@@ -56,60 +47,6 @@ public class Encode extends JFrame {
 		}
 		
 		return passwords;
-	}
-	
-	private String chooseFile(){
-		String result = null;
-		
-		//choose the file
-		JFileChooser saveAs = new JFileChooser();
-		saveAs.setFileFilter(new FileNameExtensionFilter("Text Files","txt"));
-		saveAs.setAcceptAllFileFilterUsed(false);
-		
-		int returnVal = saveAs.showSaveDialog(this);
-		
-		if(returnVal == JFileChooser.APPROVE_OPTION)
-		{
-			result = saveAs.getSelectedFile().toString();
-			
-			if(!result.endsWith(".txt"))
-			{
-				result = result + ".txt";
-			}
-		}
-		
-		return result;
-	}
-	
-	private boolean writeFile(String filename, String output){
-		boolean result = true;
-	
-		if(filename != null)
-		{
-			BufferedWriter writer;
-			try {
-				writer = new BufferedWriter(new FileWriter(filename));
-				
-				//break output into an array
-				String[] outputArray = output.split("\\n");
-				
-				for(int count = 0; count < outputArray.length; count ++)
-				{
-					writer.write(outputArray[count]);
-					writer.newLine();
-				}
-				
-				writer.flush();
-				writer.close();
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				result = false;
-			}
-		}
-		
-		return result;
 	}
 	
 	private void startSearch(){
@@ -132,7 +69,6 @@ public class Encode extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				String filename = chooseFile();
 				
 				//create a string just of the hashes
 				String hashes = "";
@@ -143,7 +79,8 @@ public class Encode extends JFrame {
 					hashes = hashes + passwords[count] + "\n";
 				}
 				
-				if(!writeFile(filename,hashes))
+				//attempt to save hashes in a file
+				if(!m_saver.save(hashes))
 				{
 					JOptionPane.showMessageDialog(null, "Saving file failed");
 				}
