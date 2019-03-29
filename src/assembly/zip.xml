@@ -22,6 +22,9 @@
        	<fileSet>
        	    <directory>${project.basedir}/python</directory>
        	    <outputDirectory>python</outputDirectory>
+       	    <excludes>
+       	    	<exclude>pwned-passwords-sha1-ordered-by-hash-v4.txt</exclude>
+       	   	</excludes>
        	</fileSet>
     </fileSets>
 </assembly>
