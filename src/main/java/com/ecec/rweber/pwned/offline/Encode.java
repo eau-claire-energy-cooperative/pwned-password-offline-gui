@@ -30,6 +30,7 @@ import com.ecec.rweber.pwned.offline.util.SHA1Encoder;
  */
 public class Encode extends JFrame {
 	private static final long serialVersionUID = -1355985486330269435L;
+	private String VERSION = "0.1.4";
 	private int HEIGHT = 600;
 	private int WIDTH = 1000;
 	
@@ -39,7 +40,7 @@ public class Encode extends JFrame {
 	private FileSaver m_saver = null;
 	
 	public Encode(){
-		this.setTitle("Pwned Password GUI");
+		this.setTitle("Pwned Password GUI v" + VERSION);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		m_saver = new FileSaver(this);
@@ -148,7 +149,7 @@ public class Encode extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "Pwned Password GUI v0.1.2\n Written By: Rob Weber \n Python Search File modifed from: https://github.com/pinae/HaveIBeenPwnedOffline \n Source: https://github.com/eau-claire-energy-cooperative/pwned-password-offline-gui");
+				JOptionPane.showMessageDialog(null, "Pwned Password GUI v" + VERSION + "\n Written By: Rob Weber \n Python Search File modifed from: https://github.com/pinae/HaveIBeenPwnedOffline \n Source: https://github.com/eau-claire-energy-cooperative/pwned-password-offline-gui");
 			}
 			
 		});
@@ -192,6 +193,18 @@ public class Encode extends JFrame {
 		JScrollPane scroll2 = new JScrollPane(m_passOutput);
 		mainPanel.add(scroll2);
 		
+		//create a reset button
+		JButton resetButton = new JButton("Reset");
+		resetButton.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				m_passInput.setText("");
+				m_passOutput.setText("");
+			}
+			
+		});
+		
 		//create the search button
 		JButton searchButton = new JButton("Start Search");
 		searchButton.addActionListener(new ActionListener(){
@@ -225,6 +238,7 @@ public class Encode extends JFrame {
 		buttonPane.add(Box.createHorizontalGlue());
 		buttonPane.add(searchButton);
 		buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
+		buttonPane.add(resetButton);
 		
 		//add both panels to the content area
 		Container contentPane = this.getContentPane();
