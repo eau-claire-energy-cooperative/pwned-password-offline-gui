@@ -1,6 +1,7 @@
 package com.ecec.rweber.pwned.offline.util;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Observable;
  */
 public class PythonProcess extends Observable {
 	private String[] m_hashes = null;
+	private String m_filename = "pwned-passwords-sha1-ordered-by-hash-v4.txt";
 	private boolean m_skipNotFound = true;
 	
 	/**
@@ -30,6 +32,35 @@ public class PythonProcess extends Observable {
 	public PythonProcess(String[] hashes, boolean skipNotFound){
 		m_hashes = hashes;
 		this.m_skipNotFound = skipNotFound;
+		
+		this.findHashFile();
+	}
+	
+	private void findHashFile() {
+		
+		//check if the python directory is using the default file or a different one
+		File pythonDir = new File("python");
+		
+		File[] txtFiles = pythonDir.listFiles(new FileFilter() {
+
+			@Override
+			public boolean accept(File pathname) {
+				//filter out txt files
+				boolean result = false;
+				
+				if(pathname.isFile() && pathname.getName().endsWith(".txt")) {
+					result = true;
+				}
+				
+				return result;
+			}
+			
+		});
+		
+		//the hash file should be the only one in the directory
+		if(txtFiles.length == 1) {
+			this.m_filename = txtFiles[0].getName();
+		}
 	}
 	
 	/**
@@ -43,6 +74,8 @@ public class PythonProcess extends Observable {
 		List<String> command = new ArrayList<String>();
 		command.add("python");
 		command.add("binary_search.py");
+		command.add("--pwned-passwords-ordered-by-hash-filename");
+		command.add(this.m_filename);
 
 		if(m_skipNotFound)
 		{
